@@ -1,0 +1,1 @@
+affichage(init(8, 8));
