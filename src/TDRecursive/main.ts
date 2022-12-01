@@ -32,5 +32,3 @@ function rechercheDichotomique(
 let array = [2, 5, 56, 60, 64, 68, 80];
 
 console.log(rechercheDichotomique(array, 80, 0, array.length));
-
-function palindrome(mot: string): boolean {}

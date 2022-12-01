@@ -1,0 +1,1 @@
+pointDansCercle(circle, pt);
