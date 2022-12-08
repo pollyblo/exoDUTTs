@@ -182,7 +182,7 @@ class Point {
 let point1 = new Point(2, 5);
 let point2 = new Point(1, 2);
 let point3 = Point.sommeDesPoints(point1, point2);
-console.log(point1, point2, point3);
+// console.log(point1, point2, point3);
 
 // exo 5
 class Segment {
@@ -194,42 +194,165 @@ class Segment {
     this.point2_ = new Point(x2, y2);
   }
 
-  inverseEdges(): void {
-    let storePoint = this.point1_;
-    this.point1_ = this.point2_;
-    this.point2_ = storePoint;
-  }
-
-  get getX1(): number {
+  get x1(): number {
     return this.point1_.abs;
   }
 
-  get getY1(): number {
+  get y1(): number {
     return this.point1_.ord;
   }
 
-  get getX2(): number {
+  get x2(): number {
     return this.point2_.abs;
   }
 
-  get getY2(): number {
+  get y2(): number {
     return this.point2_.ord;
   }
 
-  get getExt1(): Point {
+  get ext1(): Point {
     return this.point1_;
   }
 
-  get getExt2(): Point {
+  get ext2(): Point {
     return this.point2_;
   }
 
-  static lengthSeg(seg: Segment): number {
-    seg.
+  inverseEdges(): void {
+    let storedPoint = this.point1_;
+    this.point1_ = this.point2_;
+    this.point2_ = storedPoint;
+  }
+
+  lengthSegment(): number {
+    return Math.sqrt((this.x2 - this.x1) ** 2 + (this.y2 - this.y1) ** 2);
+  }
+
+  cloneSuperficial(): Segment {
+    return new Segment(this.x1, this.y1, this.x2, this.y2);
+  }
+
+  cloneDeep(): Segment {
+    let supSegment = this.cloneSuperficial();
+    let deepSegment = new Segment(supSegment.x1, supSegment.y1, supSegment.x2, supSegment.y2);
+    return deepSegment;
+  }
+
+  isEqual(s: Segment): boolean {
+    return s.x1 === this.x1 && s.y1 === this.y1 && s.x2 === this.x2 && s.y2 === this.y2;
   }
 }
 
-let seg1 = new Segment(1, 2, 3, 4);
-let x1Seg1 = seg1.getX1;
+// exo 6
 
-console.log(x1Seg1);
+class Élève {
+  private nom_: string;
+  private prénom_: string;
+  private âge_: number;
+
+  public constructor(nom: string, prénom: string, âge: number) {
+    this.nom_ = nom;
+    this.prénom_ = prénom;
+    this.âge_ = âge;
+  }
+  // Définir ici les méthodes d'accès et d'altération
+  get nom(): string {
+    return this.nom_;
+  }
+
+  get prénom(): string {
+    return this.prénom_;
+  }
+
+  get âge(): number {
+    return this.âge_;
+  }
+
+  set nom(chaine) {
+    this.nom_ = chaine;
+  }
+
+  set prénom(chaine) {
+    this.prénom_ = chaine;
+  }
+
+  set âge(valeur) {
+    this.âge_ = valeur;
+  }
+
+  // Définir une méthode d'affichage
+  // La méthode doit afficher :
+  // Nom : le nom Prénom : le prénom Age : l'age
+
+  displayEleve(): void {
+    console.log("Nom :", this.nom_, "Prénom :", this.prénom_, "Âge :", this.âge_);
+  }
+}
+
+class Classe {
+  private nombreMaximumÉlèves_: number;
+  private élèves_: Élève[];
+
+  // Constructeur : On suppose qu'au départ la classe est vide
+  constructor(nombreMaximumÉlèves: number) {
+    this.nombreMaximumÉlèves_ = nombreMaximumÉlèves;
+    this.élèves_ = [];
+  }
+
+  // Méthodes pour accéder aux informations sur la classe
+  get tailleMaximum(): number {
+    return this.nombreMaximumÉlèves_;
+  } // retourne le nombre maximum d'élèves
+
+  get tailleCourante(): number {
+    return this.élèves_.length;
+  } // retourne le nombre d'élèves actuellement
+
+  get pleine(): boolean {
+    return this.tailleCourante === this.nombreMaximumÉlèves_;
+  } // indique si la classe est pleine ou non
+
+  // méthodes pour ajouter un élève
+  // Si la classe est pleine, la méthode ne doit rien faire et renvoyer false
+  // sinon l'élève est ajouter et on retourne true
+  ajout(nom: string, prénom: string, âge: number): boolean {
+    if (this.pleine) {
+      return false;
+    } else {
+      this.élèves_.push(new Élève(nom, prénom, âge));
+      return true;
+    }
+  }
+
+  // Méthodes sur les élèves
+  dansClasse(nom: string, prénom: string): number {
+    for (let i = 0; i < this.élèves_.length; i++) {
+      if (this.élèves_[i].nom === nom && this.élèves_[i].prénom === prénom) {
+        return i;
+      } else {
+        continue;
+      }
+    }
+    return -1;
+  }
+
+  élève(nom: string, prénom: string): Élève | undefined {
+    let eleveExiste = this.dansClasse(nom, prénom);
+    if (eleveExiste != -1) {
+      return this.élèves_[eleveExiste];
+    } else {
+      return undefined;
+    }
+  }
+
+  public affiche(): void {
+    for (const key in this.élèves_) {
+      console.log(this.élèves_[key]);
+    }
+  }
+}
+
+let eleve1 = new Élève("Collet", "Ugo", 22);
+let classe1 = new Classe(20);
+classe1.ajout(eleve1.nom, eleve1.prénom, eleve1.âge);
+console.log(classe1, classe1.dansClasse("Collet", "Ugo"));
