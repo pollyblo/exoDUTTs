@@ -228,14 +228,8 @@ class Segment {
     return Math.sqrt((this.x2 - this.x1) ** 2 + (this.y2 - this.y1) ** 2);
   }
 
-  cloneSuperficial(): Segment {
-    return new Segment(this.x1, this.y1, this.x2, this.y2);
-  }
-
   cloneDeep(): Segment {
-    let supSegment = this.cloneSuperficial();
-    let deepSegment = new Segment(supSegment.x1, supSegment.y1, supSegment.x2, supSegment.y2);
-    return deepSegment;
+    return new Segment(this.x1, this.y1, this.x2, this.y2);
   }
 
   isEqual(s: Segment): boolean {
@@ -285,7 +279,11 @@ class Élève {
   // Nom : le nom Prénom : le prénom Age : l'age
 
   displayEleve(): void {
-    console.log("Nom :", this.nom_, "Prénom :", this.prénom_, "Âge :", this.âge_);
+    console.log("Nom :", this.nom, "Prénom :", this.prénom, "Âge :", this.âge);
+  }
+
+  existe(nom: string, prénom: string): boolean {
+    return this.nom === nom && this.prénom === prénom;
   }
 }
 
@@ -309,14 +307,14 @@ class Classe {
   } // retourne le nombre d'élèves actuellement
 
   get pleine(): boolean {
-    return this.tailleCourante === this.nombreMaximumÉlèves_;
+    return this.tailleCourante === this.tailleMaximum;
   } // indique si la classe est pleine ou non
 
   // méthodes pour ajouter un élève
   // Si la classe est pleine, la méthode ne doit rien faire et renvoyer false
   // sinon l'élève est ajouter et on retourne true
   ajout(nom: string, prénom: string, âge: number): boolean {
-    if (this.pleine) {
+    if (this.pleine || this.dansClasse(nom, prénom)) {
       return false;
     } else {
       this.élèves_.push(new Élève(nom, prénom, âge));
@@ -326,11 +324,9 @@ class Classe {
 
   // Méthodes sur les élèves
   dansClasse(nom: string, prénom: string): number {
-    for (let i = 0; i < this.élèves_.length; i++) {
-      if (this.élèves_[i].nom === nom && this.élèves_[i].prénom === prénom) {
+    for (let i = 0; i < this.tailleCourante; i++) {
+      if (this.élèves_[i].existe(nom, prénom)) {
         return i;
-      } else {
-        continue;
       }
     }
     return -1;
@@ -345,9 +341,9 @@ class Classe {
     }
   }
 
-  public affiche(): void {
-    for (const key in this.élèves_) {
-      console.log(this.élèves_[key]);
+  affiche(): void {
+    for (const key of this.élèves_) {
+      key.displayEleve();
     }
   }
 }
