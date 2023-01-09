@@ -352,3 +352,5 @@ let eleve1 = new Élève("Collet", "Ugo", 22);
 let classe1 = new Classe(20);
 classe1.ajout(eleve1.nom, eleve1.prénom, eleve1.âge);
 console.log(classe1, classe1.dansClasse("Collet", "Ugo"));
+
+let array = [1, 2];

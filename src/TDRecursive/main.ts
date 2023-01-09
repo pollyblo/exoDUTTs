@@ -29,6 +29,29 @@ function rechercheDichotomique(
   }
 }
 
-let array = [2, 5, 56, 60, 64, 68, 80];
+function premièreLettre(mot: string): string | undefined {
+  return mot[0];
+}
+function dernièreLettre(mot: string): string | undefined {
+  return mot[mot.length - 1];
+}
 
-console.log(rechercheDichotomique(array, 80, 0, array.length));
+function palindrome(mot: string): boolean {
+  if (mot.length === 1) return true;
+  if (mot.length === 2) return mot[0] === mot[1];
+  if (premièreLettre(mot) === dernièreLettre(mot)) {
+    return palindrome(mot.slice(1, mot.length - 1));
+  }
+  return false;
+}
+
+function euclidAlgorithm(a: number, b: number): number {
+  let r = a % b;
+  if (r === 0) {
+    return b;
+  } else {
+    return euclidAlgorithm(b, r);
+  }
+}
+
+console.log(euclidAlgorithm(119, 544));

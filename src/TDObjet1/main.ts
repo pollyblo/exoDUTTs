@@ -1,7 +1,7 @@
-// class Point {
-//   x: number;
-//   y: number;
-// }
+class Point {
+  x: number;
+  y: number;
+}
 
 class Rectangle {
   coin: Point = new Point();
@@ -143,7 +143,6 @@ function temps2Number(temps: Temps): number {
 
 let time1 = new Temps();
 time1.heure = 2;
-t;
 // console.log(temps2Number(time1));
 
 // 2
