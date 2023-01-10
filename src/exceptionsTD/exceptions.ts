@@ -58,25 +58,63 @@ class FormattedDateError extends Error {
   }
 }
 
+class WrongIntervalError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "WrongInterval";
+  }
+}
+
 function isDigit(c: string): boolean {
   return c >= "0" && c <= "9";
 }
 
-function dateToArray(date: string): string[] {
-  let dateSplitted = date.split("/");
-  let isEverythingDigit = true;
-
-  for (let i = 0; i < dateSplitted.length; i++) {
-    for (let j = 0; j < dateSplitted[i].length; j++) {
-      isEverythingDigit = isDigit(dateSplitted[i][j]);
-      console.log(isEverythingDigit);
+function isEverythingDigit(date: string[]): boolean {
+  let isEverythingDigit = false;
+  for (let i = 0; i < date.length; i++) {
+    for (let j = 0; j < date[i].length; j++) {
+      isEverythingDigit = isDigit(date[i][j]) ? true : false;
     }
   }
-
-  if (dateSplitted.length !== 3) {
-    throw new FormattedDateError("La date n'est pas bien formatée");
-  }
-  return dateSplitted;
+  return isEverythingDigit;
 }
 
-console.log(dateToArray("2a/02/2000"));
+function isInInterval(date: string[]): boolean {
+  const dateToNumber = date.map((x) => {
+    return parseInt(x, 10);
+  });
+
+  if (isEverythingDigit(date)) {
+    if (dateToNumber[0] >= 1 && dateToNumber[0] <= 31) {
+      if (dateToNumber[1] >= 1 && dateToNumber[1] <= 12) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+let validInput = false;
+function dateToArray(date: string): string[] {
+  let arrDate = date.split("/");
+
+  if (arrDate.length !== 3 || !isEverythingDigit(arrDate)) {
+    throw new FormattedDateError("La date n'est pas bien formatée");
+  } else if (!isInInterval(arrDate)) {
+    throw new WrongIntervalError("Les intervalles choisies ne sont pas valides");
+  } else {
+    validInput = true;
+  }
+
+  return arrDate;
+}
+
+do {
+  let date = readlineSync.question("Quelle date sommes-nous ? ");
+  try {
+    console.log(dateToArray(date));
+  } catch (e) {
+    if (e instanceof FormattedDateError) console.log(e.message);
+    else if (e instanceof WrongIntervalError) console.log(e.message);
+  }
+} while (validInput === false);
