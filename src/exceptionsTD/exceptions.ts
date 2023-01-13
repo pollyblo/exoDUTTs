@@ -1,3 +1,4 @@
+import { Console } from "console";
 import { read } from "fs";
 import * as readlineSync from "readline-sync";
 
@@ -51,70 +52,155 @@ import * as readlineSync from "readline-sync";
 
 //#region exo 2
 
-class FormattedDateError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "FormattedDateError";
-  }
-}
+// class FormattedDateError extends Error {
+//   constructor(message: string) {
+//     super(message);
+//     this.name = "FormattedDateError";
+//   }
+// }
 
-class WrongIntervalError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "WrongInterval";
-  }
+// class WrongIntervalError extends Error {
+//   constructor(message: string) {
+//     super(message);
+//     this.name = "WrongInterval";
+//   }
+// }
+
+// function isDigit(c: string): boolean {
+//   return c >= "0" && c <= "9";
+// }
+
+// function isEverythingDigit(date: string[]): boolean {
+//   let isEverythingDigit = false;
+//   for (let i = 0; i < date.length; i++) {
+//     for (let j = 0; j < date[i].length; j++) {
+//       isEverythingDigit = isDigit(date[i][j]) ? true : false;
+//     }
+//   }
+//   return isEverythingDigit;
+// }
+
+// function isInInterval(date: string[]): boolean {
+//   const dateToNumber = date.map((x) => {
+//     return parseInt(x, 10);
+//   });
+
+//   if (isEverythingDigit(date)) {
+//     if (dateToNumber[0] >= 1 && dateToNumber[0] <= 31) {
+//       if (dateToNumber[1] >= 1 && dateToNumber[1] <= 12) {
+//         return true;
+//       }
+//     }
+//   }
+//   return false;
+// }
+
+// let validInput = false;
+// function dateToArray(date: string): string[] {
+//   let arrDate = date.split("/");
+
+//   if (arrDate.length !== 3 || !isEverythingDigit(arrDate)) {
+//     throw new FormattedDateError("La date n'est pas bien formatée");
+//   } else if (!isInInterval(arrDate)) {
+//     throw new WrongIntervalError("Les intervalles choisies ne sont pas valides");
+//   } else {
+//     validInput = true;
+//   }
+
+//   return arrDate;
+// }
+
+// do {
+//   let date = readlineSync.question("Quelle date sommes-nous ? ");
+//   try {
+//     console.log(dateToArray(date));
+//   } catch (e) {
+//     if (e instanceof FormattedDateError) console.log(e.message);
+//     else if (e instanceof WrongIntervalError) console.log(e.message);
+//   }
+// } while (validInput === false);
+
+//#endregion
+
+function isLetter(c: string): boolean {
+  return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z");
 }
 
 function isDigit(c: string): boolean {
   return c >= "0" && c <= "9";
 }
 
-function isEverythingDigit(date: string[]): boolean {
-  let isEverythingDigit = false;
-  for (let i = 0; i < date.length; i++) {
-    for (let j = 0; j < date[i].length; j++) {
-      isEverythingDigit = isDigit(date[i][j]) ? true : false;
-    }
+class IneError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "IneError";
   }
-  return isEverythingDigit;
 }
 
-function isInInterval(date: string[]): boolean {
-  const dateToNumber = date.map((x) => {
-    return parseInt(x, 10);
-  });
+class Etudiant {
+  private _ine: string;
+  private _name: string;
+  private _surname: string;
 
-  if (isEverythingDigit(date)) {
-    if (dateToNumber[0] >= 1 && dateToNumber[0] <= 31) {
-      if (dateToNumber[1] >= 1 && dateToNumber[1] <= 12) {
-        return true;
+  constructor(ine: string, name: string, surname: string) {
+    this.ine = ine;
+    this.name = name;
+    this.surname = surname;
+  }
+
+  set name(name: string) {
+    for (let char of name.split("")) {
+      if (!isLetter(char)) {
+        throw new IneError("Ne rentrez que des caractères dans votre nom");
+      }
+    }
+    this._name = name;
+  }
+
+  set surname(surname: string) {
+    for (let char of surname.split("")) {
+      if (!isLetter(char)) {
+        throw new IneError("Ne rentrez que des caractères dans votre prénom");
+      }
+    }
+    this._surname = surname;
+  }
+
+  set ine(ine: string) {
+    const arrayIne = ine.split("");
+    const leftSide = arrayIne.slice(0, 9);
+    const rightSide = arrayIne.slice(9);
+    if (arrayIne.length != 11) {
+      throw new IneError("Erreur de formatage");
+    }
+    for (let i = 0; i < leftSide.length; i++) {
+      if (!isDigit(leftSide[i])) {
+        throw new IneError("Il doit seulement exister des caractères à la fin de l'INE");
+      } else {
+        if (
+          (isLetter(rightSide[0]) && isLetter(rightSide[1])) ||
+          (isDigit(rightSide[0]) && isLetter(rightSide[1]))
+        ) {
+          this._ine = ine;
+          validInput = true;
+        } else {
+          throw new IneError("Erreur de formatage");
+        }
       }
     }
   }
-  return false;
 }
 
 let validInput = false;
-function dateToArray(date: string): string[] {
-  let arrDate = date.split("/");
-
-  if (arrDate.length !== 3 || !isEverythingDigit(arrDate)) {
-    throw new FormattedDateError("La date n'est pas bien formatée");
-  } else if (!isInInterval(arrDate)) {
-    throw new WrongIntervalError("Les intervalles choisies ne sont pas valides");
-  } else {
-    validInput = true;
-  }
-
-  return arrDate;
-}
-
 do {
-  let date = readlineSync.question("Quelle date sommes-nous ? ");
+  const ine = readlineSync.question("Rentrez votre INE : ");
+  const name = readlineSync.question("Rentrez votre nom : ");
+  const surname = readlineSync.question("Rentrez votre prénom : ");
   try {
-    console.log(dateToArray(date));
+    const etudiant = new Etudiant(ine, name, surname);
   } catch (e) {
-    if (e instanceof FormattedDateError) console.log(e.message);
-    else if (e instanceof WrongIntervalError) console.log(e.message);
+    if (e instanceof IneError) {
+      console.log(e.message);
+    }
   }
 } while (validInput === false);
